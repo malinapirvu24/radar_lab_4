@@ -1,3 +1,7 @@
+clear all
+clc
+
+
 load('CorrectionCoefficients_colours.mat');
 RadarID = input('Select Radar ID: 1 (green), 2 (yellow), 3 (blue), 4 (red): ');
 switch RadarID
@@ -75,7 +79,7 @@ Fs = digOutSampleRate*1e3; % Hz
 dt = 1/Fs;
 t = 0:dt:(NSamp-1)*dt; % seconds
 
-[fileName,path] = uigetfile('*.raw','Select the data file'); % select data file to load
+[fileName,path] = uigetfile('*.bin','Select the data file'); % select data file to load
 fid = fopen([path fileName],'r');
 adcRaw = fread(fid,'int16');
 fclose(fid);
@@ -130,7 +134,8 @@ NChan = NTxProc*4;
 NoCorCoef = ones(1,NChan);
 winAOA = ones(NChan,1)*ones(1,NFFTR);
 RAOA = fft(winAOA.*(squeeze(RP(1:NChan,:,1)).*(CorCoef(1:NChan).'*ones(1,NFFTR))),NFFTA);
-figure; hp = pcolor(AOA,Range,fftshift(20*log10(abs(RAOA)/max(abs(RAOA(:))))',2));
+RAOA = flip(RAOA, 1);
+figure; hp = pcolor(AOA, Range, fftshift(20*log10(abs(RAOA)/max(abs(RAOA(:))))', 2));
 set(hp,'EdgeColor','none'); caxis([-40 0])
 colormap jet;xlabel('angle (deg)');ylabel('range (m)');
 title('Range/Angle map')
